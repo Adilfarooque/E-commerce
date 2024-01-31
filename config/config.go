@@ -32,17 +32,17 @@ func LoadConfig() (Config, error) {
 	var confg Config
 	viper.AddConfigPath("./")
 	viper.SetConfigFile(".env")
-	viper.ReadConfig()
-	for _, env := range envs{
-		if err := viper.BindEnv(env); err != nil{
-			return confg,err
+	viper.ReadInConfig()
+	for _, env := range envs {
+		if err := viper.BindEnv(env); err != nil {
+			return confg, err
 		}
 	}
-	if err := viper.Unmarshal(&confg); err != nil{
-		return confg,err
+	if err := viper.Unmarshal(&confg); err != nil {
+		return confg, err
 	}
-	if err := validator.New().Struct(&confg);err != nil{
-		return confg,err
+	if err := validator.New().Struct(&confg); err != nil {
+		return confg, err
 	}
-	return confg,nil
+	return confg, nil
 }
