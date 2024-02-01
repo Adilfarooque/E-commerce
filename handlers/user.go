@@ -20,7 +20,7 @@ import (
 // @Failure		500	{object}	response.Response{}
 // @Router			/user/signup    [POST]
 func UserSignUp(c *gin.Context) {
-	var SignupDetails models.UserSignup
+	var SignupDetails models.UserSignUp
 	if err := c.ShouldBindJSON(&SignupDetails); err != nil {
 		errs := response.ClientResponse(http.StatusBadRequest, "Details not correct format", nil, err.Error())
 		c.JSON(http.StatusBadRequest, errs)
