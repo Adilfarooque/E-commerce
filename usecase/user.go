@@ -9,9 +9,10 @@ import (
 	"github.com/Adilfarooque/Footgo/repository"
 	"github.com/Adilfarooque/Footgo/utils/models"
 	"github.com/google/uuid"
+	"golang.org/x/crypto/bcrypt"
 )
 
-func UsersSigUp(user models.UserSignUp) (*models.TokenUser, error) {
+func UsersSignUp(user models.UserSignUp) (*models.TokenUser, error) {
 	email, err := repository.CheckUserExistsByEmail(user.Email)
 	fmt.Println(email)
 	if err != nil {
@@ -106,4 +107,19 @@ func UsersSigUp(user models.UserSignUp) (*models.TokenUser, error) {
 		RefreshToken: refreshToken,
 	}, nil
 
+}
+
+func UserLogin(user models.LoginDetail) (*models.TokenUser, error) {
+	email, err := repository.CheckUserExistsByEmail(user.Email)
+	if err != nil {
+		return &models.TokenUser{}, errors.New("error with server")
+	}
+	if email == nil {
+		return &models.TokenUser{}, errors.New("email doesn't exists")
+	}
+	userdetails, err := repository.FindUserByEmail(user)
+	if err != nil {
+		return &models.TokenUser{}, err
+	}
+	err = bcrypt.CompareHashAndPassword([]byte(userdetails.))
 }

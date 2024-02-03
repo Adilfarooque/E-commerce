@@ -32,7 +32,7 @@ func UserSignUp(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, errs)
 		return
 	}
-	user, err := usecase.UsersSigUp(SignupDetails)
+	user, err := usecase.UsersSignUp(SignupDetails)
 	if err != nil {
 		errs := response.ClientResponse(http.StatusBadRequest, "Details not correct format", nil, err.Error())
 		c.JSON(http.StatusBadRequest, errs)
@@ -40,4 +40,28 @@ func UserSignUp(c *gin.Context) {
 	}
 	success := response.ClientResponse(http.StatusCreated, "User successfully signed up", user, nil)
 	c.JSON(http.StatusCreated, success)
+}
+
+// @Summary		User Login
+// @Description	user can log in by giving their details
+// @Tags			User
+// @Accept			json
+// @Produce		    json
+// @Param			login  body  models.LoginDetail  true	"login"
+// @Success		200	{object}	response.Response{}
+// @Failure		500	{object}	response.Response{}
+// @Router			/user/userlogin     [POST]
+func Userlogin(c *gin.Context) {
+	var UserLoginDetails models.LoginDetail
+	if err := c.ShouldBindJSON(&UserLoginDetails); err != nil {
+		errs := response.ClientResponse(http.StatusBadRequest, "Details not in correct format", nil, err.Error())
+		c.JSON(http.StatusBadRequest, errs)
+	}
+	err := validator.New().Struct(UserLoginDetails)
+	if err != nil {
+		errs := response.ClientResponse(http.StatusBadRequest, "Constrain not satisfied", nil, err.Error())
+		c.JSON(http.StatusBadRequest, errs)
+		return
+	}
+	user, err := usecase.UsersLogin(UserLoginDetails)
 }

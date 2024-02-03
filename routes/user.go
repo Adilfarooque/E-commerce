@@ -8,5 +8,6 @@ import (
 
 func UserRoutes(r *gin.RouterGroup, db *gorm.DB) *gin.RouterGroup {
 	r.POST("/signup", handlers.UserSignUp)
+	r.POST("/Userlogin",handlers.Userlogin)
 	return r
 }
