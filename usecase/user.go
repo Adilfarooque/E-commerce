@@ -3,9 +3,12 @@ package usecase
 import (
 	"errors"
 	"fmt"
+	"strconv"
 
+	"github.com/Adilfarooque/Footgo/helper"
 	"github.com/Adilfarooque/Footgo/repository"
 	"github.com/Adilfarooque/Footgo/utils/models"
+	"github.com/google/uuid"
 )
 
 func UsersSigUp(user models.UserSignUp) (*models.TokenUser, error) {
@@ -20,11 +23,87 @@ func UsersSigUp(user models.UserSignUp) (*models.TokenUser, error) {
 
 	phone, err := repository.CheckUserExistsByPhone(user.Phone)
 	fmt.Println(phone, nil)
-	if err != nil{
-		return &models.TokenUser{},errors.New("error with server")
+	if err != nil {
+		return &models.TokenUser{}, errors.New("error with server")
 	}
-	if phone != nil{
-		return &models.TokenUser{},errors.New("user with this phone is already exists")
+	if phone != nil {
+		return &models.TokenUser{}, errors.New("user with this phone is already exists")
 	}
-	
+
+	hashPassword, err := helper.PasswordHash(user.Password)
+	if err != nil {
+		return &models.TokenUser{}, errors.New("error in hashing password")
+	}
+	user.Password = hashPassword
+	userData, err := repository.UserSignUp(user)
+	if err != nil {
+		return &models.TokenUser{}, errors.New("could not add the user")
+	}
+	//Create referral code for the user and send in details  of referred id of user if it exists
+	id := uuid.New().ID()
+	//converts it to a string
+	str := strconv.Itoa(int(id))
+	//takes the first 8 charachter
+	userReferral := str[:8]
+	//It creates a referral entry in the repository using the generated referral code and user data
+	err = repository.CreateReferralEntry(userData, userReferral)
+	if err != nil {
+		return &models.TokenUser{}, err
+	}
+	if user.RefferralCode != "" {
+		//First check whether if a user with that referralCode exist
+		referredUserId, err := repository.GetUserIdFromReferrals(user.RefferralCode)
+		if err != nil {
+			return &models.TokenUser{}, err
+		}
+		if referredUserId != 0 {
+			referralAmount := 150
+			err := repository.UpdateReferralAmount(float64(referralAmount), referredUserId, userData.Id)
+			if err != nil {
+				return &models.TokenUser{}, err
+			}
+			referreason := "Amount crediterd for used referral code"
+			err = repository.UpdateHistory(userData.Id, 0, float64(referralAmount), referreason)
+			if err != nil {
+				return &models.TokenUser{}, err
+			}
+			amount, err := repository.AmountInrefferals(userData.Id)
+			if err != nil {
+				return &models.TokenUser{}, err
+			}
+			walletExist, err := repository.ExitWallet(userData.Id)
+			if err != nil {
+				return &models.TokenUser{}, err
+			}
+			if !walletExist {
+				err = repository.NewWallet(userData.Id, amount)
+				if err != nil {
+					return &models.TokenUser{}, err
+				}
+			}
+			err = repository.UpdateReferUserWallet(amount, referredUserId)
+			if err != nil {
+				return &models.TokenUser{}, err
+			}
+			reason := "Amount credited for refer a new person"
+			err = repository.UpdateHistory(referredUserId, 0, amount, reason)
+			if err != nil {
+				return &models.TokenUser{}, err
+			}
+		}
+	}
+	accessToken, err := helper.GenerateAccessToken(userData)
+	if err != nil {
+		return &models.TokenUser{}, errors.New("couldn't create access token due to error")
+	}
+	refreshToken, err := helper.GenerateRefreshToken(userData)
+	if err != nil {
+		return &models.TokenUser{}, errors.New("couldn't create refresh token due to error")
+	}
+	return &models.TokenUser{
+		Users:        userData,
+		AccessToken:  accessToken,
+		RefreshToken: refreshToken,
+	}, nil
+
 }

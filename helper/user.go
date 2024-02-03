@@ -65,3 +65,19 @@ func GenerateRefreshToken(user models.UserDetailsResponse) (string, error) {
 	}
 	return tokenString, nil
 }
+
+func CompareHashAndPasswod(a string, b string) error {
+	err := bcrypt.CompareHashAndPassword([]byte(a), []byte(b))
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func PasswordHashing(password string) (string, error) {
+	hashPassword, err := bcrypt.GenerateFromPassword([]byte(password), 10)
+	if err != nil {
+		return "", errors.New("internal server error")
+	}
+	return string(hashPassword), nil
+}
