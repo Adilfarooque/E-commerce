@@ -72,3 +72,4 @@ func Userlogin(c *gin.Context) {
 	success := response.ClientResponse(http.StatusBadRequest, "User successfully logged in with password", user, err.Error())
 	c.JSON(http.StatusBadRequest, success)
 }
+
