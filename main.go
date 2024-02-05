@@ -6,8 +6,20 @@ import (
 
 	"github.com/Adilfarooque/Footgo/config"
 	"github.com/Adilfarooque/Footgo/db"
+	"github.com/Adilfarooque/Footgo/routes"
 	"github.com/gin-gonic/gin"
 )
+
+// @title Go + Gin Footgo E-Commerce API
+// @version 1.0.0
+// @description Footgo is an E-commerce platform to purchasing and selling shoes
+// @contact.name API Support
+// @securityDefinitions.apikey Bearer
+// @in header
+// @name Authorization
+// @host localhost:8000
+// @BasePath /
+// @query.collection.format multi
 
 func main() {
 	cfig, err := config.LoadConfig()
@@ -19,8 +31,11 @@ func main() {
 	if err != nil {
 		log.Fatal("Error connecting to the database:%v", err)
 	}
-	routes := gin.Default()
-	routes.LoadHTMLFiles("template/*")
-	userGroup := routes.Group("/user")
-	adminGroup := routes.Group("/admin")
+	router := gin.Default()
+	router.LoadHTMLFiles("template/*")
+	userGroup := router.Group("/user")
+	adminGroup := router.Group("/admin")
+	routes.UserRoutes(userGroup, db)
+	router.AdminRoutes(adminGroup, db)
+
 }

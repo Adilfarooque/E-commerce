@@ -17,7 +17,7 @@ func ShowImages(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, errs)
 		return
 	}
-	image, err := usecase.ShowImage(productID)
+	image, err := usecase.ShowImages(productID)
 	if err != nil {
 		errs := response.ClientResponse(http.StatusBadGateway, "", nil, err.Error())
 		c.JSON(http.StatusInternalServerError, errs)
