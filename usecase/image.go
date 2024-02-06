@@ -6,9 +6,10 @@ import (
 )
 
 func ShowImages(productID int) ([]models.Image, error) {
-	image, err := repository.ShowImages(productID)
+	image, err := repository.ShowImage(productID)
 	if err != nil {
 		return nil, err
 	}
 	return image, nil
 }
+
