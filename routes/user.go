@@ -10,6 +10,11 @@ func UserRoutes(r *gin.RouterGroup, db *gorm.DB) *gin.RouterGroup {
 	r.POST("/signup", handlers.UserSignUp)
 	r.POST("/Userlogin", handlers.Userlogin)
 
+	r.POST("/send-otp",handlers.SendOtp)
+	r.POST("/verify-otp",handlers.VerifyOtp)
+
+	r.POST("/forgot-password",handlers.ForgotPasswordSend)
+	
 	products := r.Group("/products")
 	{
 		products.GET("", handlers.ShowAllProducts)

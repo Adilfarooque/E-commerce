@@ -13,13 +13,14 @@ func AdminRoutes(r *gin.RouterGroup, db *gorm.DB) *gin.RouterGroup {
 	r.Use(middleware.AdminAuthMiddleware())
 	{
 		r.GET("/dashboard", handlers.DashBoard)
+
+		users := r.Group("/users")
+		{
+			users.GET("", handlers.GetUsers)
+			users.PUT("/block", handlers.BlockUser)
+			users.PUT("/unblock", handlers.UnBlockUser)
+		}
 	}
 
-	users := r.Group("/users")
-	{
-		users.GET("", handlers.GetUsers)
-		users.PUT("/block", handlers.BlockUser)
-		users.PUT("/unblock", handlers.UnBlockUser)
-	}
 	return r
 }

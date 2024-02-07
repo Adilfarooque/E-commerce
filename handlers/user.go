@@ -73,3 +73,19 @@ func Userlogin(c *gin.Context) {
 	c.JSON(http.StatusBadRequest, success)
 }
 
+func ForgotPasswordSend(c *gin.Context) {
+	var model models.ForgotPasswordSend
+	if err := c.BindJSON(&model); err != nil {
+		errs := response.ClientResponse(http.StatusBadRequest, "fields provided are in wrong format", nil, err.Error())
+		c.JSON(http.StatusBadRequest, errs)
+		return
+	}
+	err := usecase.ForgotPasswordSend(model.Phone)
+	if err != nil {
+		errs := response.ClientResponse(http.StatusBadRequest, "could not send OTP", nil, err.Error())
+		c.JSON(http.StatusBadRequest, errs)
+		return
+	}
+	success := response.ClientResponse(http.StatusOK, "OTP sent successfully", nil, err.Error())
+	c.JSON(http.StatusOK, success)
+}

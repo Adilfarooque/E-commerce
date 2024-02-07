@@ -47,7 +47,7 @@ type CompleteAdminDashboard struct {
 type SalesReport struct {
 	TotalSales      float64
 	TotalOrder      int
-	CompletedOrder  int
+	CompletedOrders  int
 	PendingOreders  int
 	TrendingProduct string
 }

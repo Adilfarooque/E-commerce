@@ -69,6 +69,7 @@ func FilerCategory(c *gin.Context) {
 	success := response.ClientResponse(http.StatusOK, "Successfully filtered the category", productCategory, err.Error())
 	c.JSON(http.StatusOK, success)
 }
+
 // @Summary Get Products Details
 // @Description Retrieve all product Details
 // @Tags Admin Product Management
@@ -80,5 +81,21 @@ func FilerCategory(c *gin.Context) {
 // @Success 200 {object} response.Response{}
 // @Failure 500 {object} response.Response{}
 // @Router /admin/products   [GET]
-
-func ShowAllProductsFromAdmin()
+/*
+func ShowAllProductsFromAdmin(c *gin.Context) {
+	pageStr := c.DefaultQuery("page", "1")
+	page, err := strconv.Atoi(pageStr)
+	if err != nil {
+		errs := response.ClientResponse(http.StatusBadRequest, "", nil, err.Error())
+		c.JSON(http.StatusBadRequest, errs)
+		return
+	}
+	countStr := c.DefaultQuery("count", "10")
+	if err != nil {
+		errs := response.ClientResponse(http.StatusBadRequest, "", nil, err.Error())
+		c.JSON(http.StatusBadRequest, errs)
+		return
+	}
+	products, err := usecase.ShowAllProducts()
+}
+*/

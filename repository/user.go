@@ -240,3 +240,11 @@ func UpdateReferUserWallet(amount float64, userID int) error {
 	}
 	return nil
 }
+
+func FindUserByMobileNumber(phone string) bool {
+	var count int
+	if err := db.DB.Raw("SELECT COUNT(*) FROM users WHERE = ", phone).Scan(&count).Error; err != nil {
+		return false
+	}
+	return count > 0
+}

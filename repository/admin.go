@@ -149,3 +149,25 @@ func UpdateBlockUserByID(user domain.User) error {
 	}
 	return nil
 }
+
+/*
+func FilteredSalesReport(startTime time.Time, endTime time.Time) (models.SalesReport, error) {
+	var salesReport models.SalesReport
+	result := db.DB.Raw("SELECT COALESCE(SUM(final_price),0) FROM orders WHERE payment_status'paid' AND approval = true AND created_at <= ?", startTime, endTime).Scan(&salesReport.TotalSales)
+	if result.Error != nil {
+		return models.SalesReport{}, result.Error
+	}
+	result = db.DB.Raw("SELECT COUNT(*) FROM orders").Scan(&salesReport.TotalSales)
+	if result.Error != nil {
+		return models.SalesReport{}, result.Error
+	}
+	result = db.DB.Raw("SELECT COUNT(*) FROM orders WHERE payment_status = 'paid' AND approval = false AND created_at >= ? AND created_at <= ?", startTime, endTime).Scan(&salesReport.CompletedOrders)
+	if result.Error != nil {
+		return models.SalesReport{}, result.Error
+	}
+	result = db.DB.Raw("SELECT COUNT(*) FROM orders WHERE shipment_status = 'processing' AND approval = false AND created_at >= ? AND created_at <= ?", startTime, endTime).Scan(&salesReport.PendingOreders)
+	if result.Error != nil {
+		return models.SalesReport{}, result.Error
+	}
+}
+*/

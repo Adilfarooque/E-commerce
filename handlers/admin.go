@@ -137,3 +137,27 @@ func UnBlockUser(c *gin.Context) {
 	success := response.ClientResponse(http.StatusOK, "Successfully unblocked the user", nil, err.Error())
 	c.JSON(http.StatusOK, success)
 }
+
+// @Summary Filtered Sales Report
+// @Description Get Filtered sales report by week, month and year
+// @Tags Admin
+// @Accept json
+// @Produce json
+// @Security Bearer
+// @Param period query string true "sales report"
+// @Success 200 {object} response.Response{}
+// @Failure 500 {object} response.Response{}
+// @Router /admin/sales-report    [GET]
+/*
+func FilteredSalesReport(c *gin.Context) {
+	timePeriod := c.Query("period")
+	salesReport, err := usecase.FilteredSalesReport()
+	if err != nil {
+		errRes := response.ClientResponse(http.StatusInternalServerError, "report couldn't retrieved", nil, err.Error())
+		c.JSON(http.StatusInternalServerError, errRes)
+		return
+	}
+	success := response.ClientResponse(http.StatusOK, "report retrieved successfully", salesReport, nil)
+	c.JSON(http.StatusOK, success)
+}
+*/

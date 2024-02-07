@@ -116,3 +116,22 @@ func FilerCategory(data map[string]int) ([]models.ProductBrief, error) {
 	return updateProductDetails, err
 }
 
+/*
+func ShowAllProductsFromAdmin(page,count int)([]models.ProductBrief,error){
+	productDetails , err := repository.ShowAllProductsFromAdmin(page,count)
+	if err != nil{
+		return []models.ProductBrief{},err
+	}
+	for i := range productDetails{
+		p := &productDetails[i]
+		if p.Stock <= 0{
+			p.ProductStatus = "out of stock"
+		}else{
+			p.ProductStatus = "in stock"
+		}
+	}
+	for j := range productDetails{
+		discount_percentage , err := repository
+	}
+}
+*/

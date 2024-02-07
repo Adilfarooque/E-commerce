@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"strconv"
 
+	"github.com/Adilfarooque/Footgo/config"
 	"github.com/Adilfarooque/Footgo/helper"
 	"github.com/Adilfarooque/Footgo/repository"
 	"github.com/Adilfarooque/Footgo/utils/models"
@@ -144,4 +145,18 @@ func UserLogin(user models.LoginDetail) (*models.TokenUser, error) {
 		AccessToken:  accessToken,
 		RefreshToken: refreshToken,
 	}, nil
+}
+
+func ForgotPasswordSend(phone string) error {
+	cfg, _ := config.LoadConfig()
+	ok := repository.FindUserByMobileNumber(phone)
+	if !ok {
+		return errors.New("the user does not exists")
+	}
+	helper.TwilioSetup(cfg.ACCOUNTSID, cfg.AUTHTOKEN)
+	_, err := helper.TwilioSendOTP(phone, cfg.SERVICESSID)
+	if err != nil {
+		return errors.New("error occured while generating OTP")
+	}
+	return nil
 }
