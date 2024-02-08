@@ -15,6 +15,7 @@ import (
 )
 
 func UsersSignUp(user models.UserSignUp) (*models.TokenUser, error) {
+	//Check if user alerady exists by email
 	email, err := repository.CheckUserExistsByEmail(user.Email)
 	fmt.Println(email)
 	if err != nil {
@@ -23,7 +24,7 @@ func UsersSignUp(user models.UserSignUp) (*models.TokenUser, error) {
 	if email != nil {
 		return &models.TokenUser{}, errors.New("user with this email is already exists")
 	}
-
+	//Check if user already exists by phone
 	phone, err := repository.CheckUserExistsByPhone(user.Phone)
 	fmt.Println(phone, nil)
 	if err != nil {
@@ -32,12 +33,13 @@ func UsersSignUp(user models.UserSignUp) (*models.TokenUser, error) {
 	if phone != nil {
 		return &models.TokenUser{}, errors.New("user with this phone is already exists")
 	}
-
+	//Hash the password
 	hashPassword, err := helper.PasswordHash(user.Password)
 	if err != nil {
 		return &models.TokenUser{}, errors.New("error in hashing password")
 	}
 	user.Password = hashPassword
+	//Signup the  user
 	userData, err := repository.UserSignUp(user)
 	if err != nil {
 		return &models.TokenUser{}, errors.New("could not add the user")
