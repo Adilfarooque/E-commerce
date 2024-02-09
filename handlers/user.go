@@ -20,19 +20,19 @@ import (
 // @Failure		500	{object}	response.Response{}
 // @Router			/user/signup    [POST]
 func UserSignUp(c *gin.Context) {
-	var SignupDetails models.UserSignUp
-	if err := c.ShouldBindJSON(&SignupDetails); err != nil {
+	var SignupDetail models.UserSignUp
+	if err := c.ShouldBindJSON(&SignupDetail); err != nil {
 		errs := response.ClientResponse(http.StatusBadRequest, "Details not correct format", nil, err.Error())
 		c.JSON(http.StatusBadRequest, errs)
 		return
 	}
-	err := validator.New().Struct(&SignupDetails)
+	err := validator.New().Struct(SignupDetail)
 	if err != nil {
 		errs := response.ClientResponse(http.StatusBadRequest, "Constrains not satisfied", nil, err.Error())
 		c.JSON(http.StatusBadRequest, errs)
 		return
 	}
-	user, err := usecase.UsersSignUp(SignupDetails)
+	user, err := usecase.UsersSignUp(SignupDetail)
 	if err != nil {
 		errs := response.ClientResponse(http.StatusBadRequest, "Details not correct format", nil, err.Error())
 		c.JSON(http.StatusBadRequest, errs)
