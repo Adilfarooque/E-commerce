@@ -113,7 +113,7 @@ func UsersSignUp(user models.UserSignUp) (*models.TokenUser, error) {
 
 }
 
-func UserLogin(user models.LoginDetail) (*models.TokenUser, error) {
+func UsersLogin(user models.LoginDetail) (*models.TokenUser, error) {
 	email, err := repository.CheckUserExistsByEmail(user.Email)
 	if err != nil {
 		return &models.TokenUser{}, errors.New("error with server")

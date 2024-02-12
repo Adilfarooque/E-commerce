@@ -38,19 +38,19 @@ func UserSignUp(c *gin.Context) {
 			// Extract field name and tag from the error and construct a cleaner error message
 			errorMessages = append(errorMessages, fmt.Sprintf("Field validation for %s failed on the %s tag", e.Field(), e.Tag()))
 		}
-		
+
 		errorMessage := strings.Join(errorMessages, "\n")
 		errs := response.ClientResponse(http.StatusBadRequest, errorMessage, nil, "")
 		c.JSON(http.StatusBadRequest, errs)
 		return
 	}
 	/*
-	err := validator.New().Struct(SignupDetails)
-	if err != nil {
-		errs := response.ClientResponse(http.StatusBadRequest, "Constrains not satisfied", nil, err.Error())
-		c.JSON(http.StatusBadRequest, errs)
-		return
-	}
+		err := validator.New().Struct(SignupDetails)
+		if err != nil {
+			errs := response.ClientResponse(http.StatusBadRequest, "Constrains not satisfied", nil, err.Error())
+			c.JSON(http.StatusBadRequest, errs)
+			return
+		}
 	*/
 	user, err := usecase.UsersSignUp(SignupDetails)
 	if err != nil {
@@ -71,26 +71,27 @@ func UserSignUp(c *gin.Context) {
 // @Success		200	{object}	response.Response{}
 // @Failure		500	{object}	response.Response{}
 // @Router			/user/userlogin     [POST]
+
 func Userlogin(c *gin.Context) {
-	var UserLoginDetails models.LoginDetail
-	if err := c.ShouldBindJSON(&UserLoginDetails); err != nil {
+	var UserLoginDetail models.LoginDetail
+	if err := c.ShouldBindJSON(&UserLoginDetail); err != nil {
 		errs := response.ClientResponse(http.StatusBadRequest, "Details not in correct format", nil, err.Error())
 		c.JSON(http.StatusBadRequest, errs)
 	}
-	err := validator.New().Struct(UserLoginDetails)
+	err := validator.New().Struct(UserLoginDetail)
 	if err != nil {
-		errs := response.ClientResponse(http.StatusBadRequest, "Constrain not satisfied", nil, err.Error())
+		errs := response.ClientResponse(http.StatusBadRequest, "Constraints not statisfied", nil, err.Error())
 		c.JSON(http.StatusBadRequest, errs)
 		return
 	}
-	user, err := usecase.UserLogin(UserLoginDetails)
+	user, err := usecase.UsersLogin(UserLoginDetail)
 	if err != nil {
 		errs := response.ClientResponse(http.StatusBadRequest, "fields provided are in wrong format", nil, err.Error())
 		c.JSON(http.StatusBadRequest, errs)
 		return
 	}
-	success := response.ClientResponse(http.StatusBadRequest, "User successfully logged in with password", user, err.Error())
-	c.JSON(http.StatusBadRequest, success)
+	success := response.ClientResponse(http.StatusCreated, "User successfully logged in with password", user, nil)
+	c.JSON(http.StatusCreated, success)
 }
 
 func ForgotPasswordSend(c *gin.Context) {

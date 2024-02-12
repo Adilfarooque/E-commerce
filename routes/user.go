@@ -8,19 +8,19 @@ import (
 
 func UserRoutes(r *gin.RouterGroup, db *gorm.DB) *gin.RouterGroup {
 	r.POST("/signup", handlers.UserSignUp)
-	r.POST("/Userlogin", handlers.Userlogin)
+	r.POST("/login", handlers.Userlogin)
 
-	r.POST("/send-otp",handlers.SendOtp)
-	r.POST("/verify-otp",handlers.VerifyOtp)
+	r.POST("/send-otp", handlers.SendOtp)
+	r.POST("/verify-otp", handlers.VerifyOtp)
 
-	r.POST("/forgot-password",handlers.ForgotPasswordSend)
-	
+	r.POST("/forgot-password", handlers.ForgotPasswordSend)
+
 	products := r.Group("/products")
 	{
-		products.GET("", handlers.ShowAllProducts)
-		products.POST("/filter",handlers.FilerCategory)
-		products.GET("/image",handlers.ShowImages)
-	
+	products.GET("", handlers.ShowAllProducts)
+	products.POST("/filter", handlers.FilerCategory)
+	products.GET("/image", handlers.ShowImages)
 	}
 	return r
+
 }
