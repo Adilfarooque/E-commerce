@@ -4,8 +4,8 @@ import (
 	"errors"
 	"time"
 
-	"github.com/Adilfarooque/Footgo/config"
-	"github.com/Adilfarooque/Footgo/utils/models"
+	"github.com/Adilfarooque/Footgo_Ecommerce/config"
+	"github.com/Adilfarooque/Footgo_Ecommerce/utils/models"
 	"github.com/golang-jwt/jwt"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -18,10 +18,13 @@ type AuthUserClaims struct {
 }
 
 func PasswordHash(password string) (string, error) {
+	//It generates a bcrypt hash from the password using
 	hashPassword, err := bcrypt.GenerateFromPassword([]byte(password), 10)
+	//If there is an error during the hashing process, it returns an empty string along with a custom error message ("Internal server error")
 	if err != nil {
 		return "", errors.New("internal server error")
 	}
+	//Otherwise, it coverts the hashed password to string and returns it along with a nil error
 	hash := string(hashPassword)
 	return hash, nil
 }
@@ -36,8 +39,7 @@ func GenerateTokenUsers(userID int, userEmail string, expirationTime time.Time) 
 			IssuedAt:  time.Now().Unix(),
 		},
 	}
-	//It creates new jwt token using
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	token := jwt.NewWithClaims(jwt.SigningMethodES256, claims)
 	tokenString, err := token.SignedString([]byte(cfg.KEY))
 	if err != nil {
 		return "", err
@@ -46,38 +48,21 @@ func GenerateTokenUsers(userID int, userEmail string, expirationTime time.Time) 
 }
 
 func GenerateAccessToken(user models.UserDetailsResponse) (string, error) {
-	// It calculates the expiration time for the access token
 	expirationTime := time.Now().Add(15 * time.Minute)
-	// This function generates a JWT token using the provided details
 	tokenString, err := GenerateTokenUsers(user.Id, user.Email, expirationTime)
+
 	if err != nil {
 		return "", err
 	}
-	// If the token is successfully generated, it returns the token string.
 	return tokenString, nil
 }
 
-func GenerateRefreshToken(user models.UserDetailsResponse) (string, error) {
+func GenrateRefreshToken(user models.UserDetailsResponse)(string,error){
 	expirationTime := time.Now().Add(24 * 90 * time.Hour)
-	tokenString, err := GenerateTokenUsers(user.Id, user.Email, expirationTime)
-	if err != nil {
-		return "", err
+	tokenString ,err := GenerateTokenUsers(user.Id,user.Email,expirationTime)
+	if err != nil{
+		return "",err
 	}
-	return tokenString, nil
+	return tokenString,nil
 }
 
-func CompareHashAndPasswod(a string, b string) error {
-	err := bcrypt.CompareHashAndPassword([]byte(a), []byte(b))
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-func PasswordHashing(password string) (string, error) {
-	hashPassword, err := bcrypt.GenerateFromPassword([]byte(password), 10)
-	if err != nil {
-		return "", errors.New("internal server error")
-	}
-	return string(hashPassword), nil
-}

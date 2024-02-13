@@ -1,15 +1,13 @@
 package models
 
 type UserSignUp struct {
-	Firstname     string `json:"firstname"`
-	Lastname      string `json:"lastname"`
-	Email         string `json:"email" validate:"required,email"`
-	Password      string `json:"password" validate:"required,min=6,max=20"`
-	Phone         string `json:"phone"`
-	RefferralCode string `json:"referral_code"`
+	Firstname    string `json:"firstname"`
+	Lastname     string `json:"lastname"`
+	Email        string `json:"email" validate:"email"`
+	Password     string `json:"password" validate:"min=6,max=20"`
+	Phone        string `json:"phone"`
+	ReferralCode string `json:"referral_code"`
 }
-
-
 
 type UserDetailsResponse struct {
 	Id        int    `json:"id"`
@@ -19,13 +17,13 @@ type UserDetailsResponse struct {
 	Phone     string `json:"phone"`
 }
 
-type UserDetailsAtAdmin struct {
+type UserDetailsAdmin struct {
 	Id        int    `json:"id"`
-	Firstname string `json:"firsname"`
+	Firstname string `json:"firstname"`
 	Lastname  string `json:"lastname"`
 	Email     string `json:"email"`
 	Phone     string `json:"phone"`
-	Blocked   bool   `json:"blocked"`
+	Blocked   string `json:"blocked"`
 }
 
 type TokenUser struct {
@@ -49,16 +47,6 @@ type UserLoginResponse struct {
 	Password  string `json:"password"`
 }
 
-type AddressInfoResponse struct {
-	ID        uint   `json:"id"`
-	Name      string `json:"name" validate:"required"`
-	HouseName string `json:"hours_name" validate:"required"`
-	Street    string `json:"street"`
-	City      string `json:"city"`
-	State     string `json:"state" validate:"required"`
-	Pin       string `json:"pin" validate:"required"`
-}
-
 type AddressInfo struct {
 	Name      string `json:"name" validate:"required"`
 	HouseName string `json:"house_name" validate:"required"`
@@ -68,12 +56,22 @@ type AddressInfo struct {
 	Pin       string `json:"pin" validate:"required"`
 }
 
-type UsersProfileDetails struct {
-	Firstname     string `json:"firstname"`
-	Lastname      string `json:"lastname"`
-	Email         string `json:"email"`
-	Phone         string `json:"phone"`
-	RefferralCode string `json:"referral_code"`
+type AddressInfoResponse struct {
+	ID        uint   `json:"id"`
+	Name      string `json:"name" validate:"required"`
+	HouseName string `json:"house_name" validate:"required"`
+	Street    string `json:"street"`
+	City      string `json:"city"`
+	State     string `json:"state" validate:"required"`
+	Pin       string `json:"pin" validate:"required"`
+}
+
+type UserProfileDetails struct {
+	Firstname    string `json:"firstname"`
+	Lastname     string `json:"lastname"`
+	Email        string `json:"email"`
+	Phone        string `json:"phone"`
+	ReferralCode string `json:"referral_code"`
 }
 
 type UpdatePassword struct {
@@ -82,15 +80,15 @@ type UpdatePassword struct {
 	ConfirmNewPassword string `json:"confirm_new_password" binding:"required"`
 }
 
-type PaymentDetails struct {
-	PaymentDetail []PaymentDetails
-	WalletAmount  float64 `json:"wallet_amout"`
+type PaymentDetail struct {
+	ID           uint   `json:"id"`
+	Payment_Name string `json:"payment_name"`
 }
 
 type CheckoutDetails struct {
 	AddressInfoResponse []AddressInfoResponse
-	Payment_Method      []PaymentDetails
-	//Cart                []Cart
+	Payment_Method      []PaymentDetail
+	//Cart []cart
 	Total_Price float64
 }
 
@@ -105,7 +103,7 @@ type ForgotPasswordSend struct {
 }
 
 type ForgotVerify struct {
-	Phone       string `json:"phone" binding:"required"`
+	Phone       string `json:"phone" binding:"required" validate:"required"`
 	Otp         string `json:"otp" binding:"required"`
-	NewPassword string `json:"newpassword" binding:"required"`
+	NewPassword string `json:"newpassword" binding:"required" validate:"min=6,max=20"`
 }
