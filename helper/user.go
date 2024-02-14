@@ -65,4 +65,3 @@ func GenrateRefreshToken(user models.UserDetailsResponse)(string,error){
 	}
 	return tokenString,nil
 }
-

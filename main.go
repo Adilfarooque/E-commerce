@@ -22,19 +22,31 @@ import (
 // @query.collection.format multi
 
 func main() {
-	confg, err := config.LoadConfig()
+	gin.SetMode(gin.ReleaseMode)
+	//Load application configuration
+	conf, err := config.LoadConfig()
 	if err != nil {
 		log.Fatal("Error loading the config file")
 	}
-	fmt.Println(confg)
-	db, err := db.ConnectDatabase(confg)
+	//Connect to the database
+	db, err := db.ConnectDatabase(conf)
 	if err != nil {
 		log.Fatalf("Error connecting to the database:%v", err)
 	}
+	//Initial Gin router
 	r := gin.Default()
-	r.LoadHTMLFiles("templates/*")
+	//Load Html templates
+	//r.LoadHTMLFiles("template/*")
+	//Define route groups
 	userGroup := r.Group("/user")
 	adminGroup := r.Group("/admin")
+	//Register the routes
 	routes.UserRoutes(userGroup, db)
 	routes.AdminRoutes(adminGroup, db)
+
+	listenAddress := fmt.Sprintf("%s:%s", conf.DBPort, conf.DBHost)
+	fmt.Printf("Starting sever on %s..\n", conf.BASE_URL)
+	if err := r.Run(conf.BASE_URL); err != nil {
+		log.Fatalf("Error starting server on %s:%s", listenAddress, err)
+	}
 }
